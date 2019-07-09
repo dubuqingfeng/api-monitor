@@ -11,12 +11,13 @@ import (
 
 type BearyChatSender struct {
 	Sender
+	UnSupportType map[string]int
 }
 
 var BearyChatPusher BearyChatSender
 
 func init() {
-	BearyChatPusher = BearyChatSender{}
+	BearyChatPusher = BearyChatSender{UnSupportType: utils.Config.SenderConfig.BearyChat.UnSupportTypes}
 }
 
 func (f BearyChatSender) IsSupport() bool {
@@ -33,6 +34,9 @@ func (f BearyChatSender) Send(notifications []*models.Notification) {
 }
 
 func (f BearyChatSender) SingleSend(notification *models.Notification) {
+	if _, ok := f.UnSupportType[notification.Type]; ok {
+		return
+	}
 	m := bearychat.Incoming{
 		Text:         f.BuildMessage(notification),
 		Markdown:     true,

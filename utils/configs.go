@@ -17,13 +17,15 @@ type MySQLDB struct {
 
 type SenderConfig struct {
 	BearyChat struct {
-		IsEnabled     bool
-		GroupEndpoint string
+		IsEnabled      bool
+		GroupEndpoint  string
+		UnSupportTypes map[string]int
 	}
 	Slack struct {
-		IsEnabled  bool
-		RobotToken string
-		Channel    string
+		IsEnabled      bool
+		RobotToken     string
+		Channel        string
+		UnSupportTypes map[string]int
 	}
 }
 

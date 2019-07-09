@@ -9,6 +9,7 @@ import (
 	"github.com/dubuqingfeng/api-monitor/utils"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 )
@@ -45,6 +46,7 @@ func (f APIFetcher) Handle() {
 			}
 			log.Error(accessEndpointIds)
 		}
+
 		for _, endpoint := range endpoints {
 			// api
 			stats, ok := accessEndpointIds[endpoint.ID]
@@ -93,18 +95,38 @@ func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API, ch chan *
 		request.URL.RawQuery = api.QueryStringParams
 	}
 
+	// request Headers
 	if api.RequestHeader != "" {
-		request.Header.Set("Content-Type", "application/json")
+		headers := make(map[string]string)
+		err = json.Unmarshal([]byte( api.RequestHeader), &headers)
+		if err != nil {
+			log.Error(err)
+		}
+		for key, value := range headers {
+			request.Header.Set(key, value)
+		}
+	}
+
+	// global environment variable
+	globalEnv := os.Getenv("GLOBAL_HEADERS")
+	if globalEnv != "" {
+		globalHeaders := make(map[string]string)
+		err = json.Unmarshal([]byte(globalEnv), &globalHeaders)
+		if err != nil {
+			log.Error(err)
+		}
+		for key, value := range globalHeaders {
+			request.Header.Set(key, value)
+		}
 	}
 
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("UA", "application/json")
+	request.Header.Set("UA", "api-monitor")
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
-	log.Info(resp.Status)
 	//content, err := ioutil.ReadAll(resp.Body)
 	//if err != nil {
 	//	fmt.Println("Fatal error ", err.Error())

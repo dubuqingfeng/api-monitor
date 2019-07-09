@@ -5,6 +5,7 @@ import (
 	"github.com/dubuqingfeng/api-monitor/senders"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"sync"
 )
 
 type RequestProcessor struct {
@@ -48,6 +49,7 @@ func (r RequestProcessor) SendNotifications(notifications []*models.Notification
 	// pusher list
 	pushers := [2]senders.Sender{senders.BearyChatPusher, senders.SlackPusher}
 
+	var wg sync.WaitGroup
 	for _, item := range pushers {
 		if item == nil {
 			continue
@@ -55,6 +57,10 @@ func (r RequestProcessor) SendNotifications(notifications []*models.Notification
 		if !item.IsSupport() {
 			continue
 		}
-		item.Send(notifications)
+		wg.Add(1)
+		go func(notifications []*models.Notification) {
+			item.Send(notifications)
+		}(notifications)
 	}
+	wg.Wait()
 }

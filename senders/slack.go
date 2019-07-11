@@ -66,5 +66,6 @@ func (s SlackSender) SingleSend(notification *models.Notification) {
 }
 
 func (s SlackSender) BuildMessage(notification *models.Notification) string {
-	return fmt.Sprintf("status:%d,type:%s,url:%s", notification.HttpStatus, notification.Reason, notification.URL)
+	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HttpStatus, notification.Reason,
+		utils.Config.MonitorName, notification.URL)
 }

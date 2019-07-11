@@ -31,6 +31,7 @@ type SenderConfig struct {
 
 var Config = struct {
 	Name                         string `default:"app_name"`
+	MonitorName                  string `default:"api-monitor"`
 	GlobalDatabase               MySQLDB
 	APIConfigDatabase            MySQLDB
 	APIConfigDatabaseTablePrefix string

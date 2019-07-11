@@ -34,7 +34,7 @@ func (f BearyChatSender) Send(notifications []*models.Notification) {
 }
 
 func (f BearyChatSender) SingleSend(notification *models.Notification) {
-	if _, ok := f.UnSupportType[notification.Type]; ok {
+	if _, ok := f.UnSupportType[notification.Type]; notification.Type != "" && ok {
 		return
 	}
 	m := bearychat.Incoming{
@@ -50,5 +50,6 @@ func (f BearyChatSender) SingleSend(notification *models.Notification) {
 }
 
 func (f BearyChatSender) BuildMessage(notification *models.Notification) string {
-	return fmt.Sprintf("status:%d,type:%s,url:%s", notification.HttpStatus, notification.Reason, notification.URL)
+	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HttpStatus,
+		notification.Reason, utils.Config.MonitorName, notification.URL)
 }

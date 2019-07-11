@@ -15,11 +15,15 @@ import (
 )
 
 func NewAPIFetcher() *APIFetcher {
-	fetcher := &APIFetcher{}
+	fetcher := &APIFetcher{
+		ch: make(chan *models.Process),
+	}
 	return fetcher
 }
 
 type APIFetcher struct {
+	wg sync.WaitGroup
+	ch chan *models.Process
 }
 
 func (f APIFetcher) Handle() {
@@ -33,8 +37,8 @@ func (f APIFetcher) Handle() {
 	if err != nil {
 		log.Error(err)
 	}
-	ch := make(chan *models.Process)
-	var wg sync.WaitGroup
+	//ch := make(chan *models.Process)
+	//var wg sync.WaitGroup
 	for _, api := range apis {
 		var accessEndpointIds map[int64]int
 		if api.AccessEndpointIds != "" {
@@ -55,32 +59,34 @@ func (f APIFetcher) Handle() {
 					// limit access
 					continue
 				}
-				log.Error(stats)
 			}
 
 			if len(accessEndpointIds) != 0 && !ok {
 				// limit
 				continue
 			}
-			wg.Add(1)
-			go func(endpoint models.APIEndpoint, api models.API, ch chan *models.Process) {
-				f.fetch(endpoint, api, ch)
-				wg.Done()
-			}(endpoint, api, ch)
+			f.wg.Add(1)
+			go func(endpoint models.APIEndpoint, api models.API) {
+				err := f.fetch(endpoint, api)
+				if err != nil {
+					log.Error(err)
+				}
+				f.wg.Done()
+			}(endpoint, api)
 		}
 	}
 	go func() {
-		wg.Wait()
-		close(ch)
+		f.wg.Wait()
+		close(f.ch)
 	}()
 	processor := processors.RequestProcessor{}
-	for item := range ch {
+	for item := range f.ch {
 		log.Info(item)
 		processor.Process(item)
 	}
 }
 
-func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API, ch chan *models.Process) error {
+func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) error {
 	client := &http.Client{Timeout: 10 * time.Second}
 	var buf bytes.Buffer
 	buf.WriteString(endpoint.Endpoint)
@@ -139,6 +145,6 @@ func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API, ch chan *
 		}
 	}()
 	process := models.Process{API: api, Endpoint: endpoint, Response: resp}
-	ch <- &process
+	f.ch <- &process
 	return nil
 }

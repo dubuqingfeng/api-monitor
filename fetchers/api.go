@@ -37,8 +37,6 @@ func (f APIFetcher) Handle() {
 	if err != nil {
 		log.Error(err)
 	}
-	//ch := make(chan *models.Process)
-	//var wg sync.WaitGroup
 	for _, api := range apis {
 		var accessEndpointIds map[int64]int
 		if api.AccessEndpointIds != "" {
@@ -81,7 +79,6 @@ func (f APIFetcher) Handle() {
 	}()
 	processor := processors.RequestProcessor{}
 	for item := range f.ch {
-		log.Info(item)
 		processor.Process(item)
 	}
 }

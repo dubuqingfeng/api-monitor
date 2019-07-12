@@ -64,13 +64,7 @@ func (f APIFetcher) Handle() {
 				continue
 			}
 			f.wg.Add(1)
-			go func(endpoint models.APIEndpoint, api models.API) {
-				err := f.fetch(endpoint, api)
-				if err != nil {
-					log.Error(err)
-				}
-				f.wg.Done()
-			}(endpoint, api)
+			go f.fetch(endpoint, api)
 		}
 	}
 	go func() {
@@ -83,7 +77,8 @@ func (f APIFetcher) Handle() {
 	}
 }
 
-func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) error {
+func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) {
+	defer f.wg.Done()
 	client := &http.Client{Timeout: 10 * time.Second}
 	var buf bytes.Buffer
 	buf.WriteString(endpoint.Endpoint)
@@ -128,7 +123,7 @@ func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) error {
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Error(err)
-		return err
+		return
 	}
 	//content, err := ioutil.ReadAll(resp.Body)
 	//if err != nil {
@@ -143,5 +138,4 @@ func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) error {
 	}()
 	process := models.Process{API: api, Endpoint: endpoint, Response: resp}
 	f.ch <- &process
-	return nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/dubuqingfeng/api-monitor/processors"
 	"github.com/dubuqingfeng/api-monitor/utils"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"sync"
@@ -17,13 +18,22 @@ import (
 func NewAPIFetcher() *APIFetcher {
 	fetcher := &APIFetcher{
 		ch: make(chan *models.Process),
+		client: &http.Client{
+			Timeout: 10 * time.Second,
+			Transport: &http.Transport{
+				TLSHandshakeTimeout:   10 * time.Second,
+				ResponseHeaderTimeout: 10 * time.Second,
+				ExpectContinueTimeout: 1 * time.Second,
+			},
+		},
 	}
 	return fetcher
 }
 
 type APIFetcher struct {
-	wg sync.WaitGroup
-	ch chan *models.Process
+	wg     sync.WaitGroup
+	client *http.Client
+	ch     chan *models.Process
 }
 
 func (f APIFetcher) Handle() {
@@ -79,7 +89,6 @@ func (f APIFetcher) Handle() {
 
 func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) {
 	defer f.wg.Done()
-	client := &http.Client{Timeout: 10 * time.Second}
 	var buf bytes.Buffer
 	buf.WriteString(endpoint.Endpoint)
 	buf.WriteString(api.APIURL)
@@ -120,22 +129,22 @@ func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) {
 
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("UA", "api-monitor")
-	resp, err := client.Do(request)
+	resp, err := f.client.Do(request)
 	if err != nil {
 		log.Error(err)
 		return
 	}
-	//content, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	fmt.Println("Fatal error ", err.Error())
-	//}
-	//fmt.Println(string(content))
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Error("Fatal error ", err.Error())
+		return
+	}
 	defer func() {
 		err := resp.Body.Close()
 		if err != nil {
 			log.Error(err)
 		}
 	}()
-	process := models.Process{API: api, Endpoint: endpoint, Response: resp}
+	process := models.Process{API: api, Endpoint: endpoint, Response: resp, Body: content}
 	f.ch <- &process
 }

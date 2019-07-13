@@ -60,12 +60,17 @@ func (s SlackSender) SingleSend(notification *models.Notification) {
 		bytes.NewBufferString(data.Encode()))
 	if err != nil {
 		log.Error(err)
+		return
 	}
 	content, err := ioutil.ReadAll(body.Body)
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	log.Info(string(content))
 }
 
 func (s SlackSender) BuildMessage(notification *models.Notification) string {
-	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HttpStatus, notification.Reason,
+	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HttpStatus, notification.Type,
 		utils.Config.MonitorName, notification.URL)
 }

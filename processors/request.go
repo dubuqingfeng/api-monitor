@@ -1,10 +1,14 @@
 package processors
 
 import (
+	"encoding/json"
 	"github.com/dubuqingfeng/api-monitor/models"
+	"github.com/dubuqingfeng/api-monitor/pkg/jsonpath"
 	"github.com/dubuqingfeng/api-monitor/senders"
+	"github.com/dubuqingfeng/api-monitor/utils"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 	"sync"
 )
 
@@ -35,10 +39,77 @@ func (r RequestProcessor) Process(process *models.Process) {
 	// timeout > 1s
 
 	// assert
-	//notification := &models.Notification{HttpStatus: process.Response.StatusCode, Reason: "", URL: url}
-	//notifications = append(notifications, notification)
+	assertNotifications := r.ProcessAssert(process)
+	notifications = append(notifications, assertNotifications...)
 	// send
 	r.SendNotifications(notifications)
+}
+
+func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notification {
+	var assert models.Assert
+	var notifications []*models.Notification
+	url := process.Endpoint.Endpoint + process.API.APIURL
+	if process.API.Assert == "" {
+		return notifications
+	}
+	err := json.Unmarshal([]byte(process.API.Assert), &assert)
+	if err != nil {
+		log.Error(err)
+	}
+	if len(assert.Status) != 0 {
+		for _, assertStatus := range assert.Status {
+			true := r.ProcessStatusAssert(process, assertStatus)
+			if !true {
+				notification := &models.Notification{HttpStatus: process.Response.StatusCode, Reason: "", URL: url,
+					Type: utils.APITypeAssertFailed}
+				notifications = append(notifications, notification)
+			}
+		}
+	}
+	if len(assert.JSONPath) != 0 {
+		for _, assertStatus := range assert.JSONPath {
+			true := r.ProcessJsonPathAssert(process, assertStatus)
+			if !true {
+				notification := &models.Notification{HttpStatus: process.Response.StatusCode, Reason: "", URL: url,
+					Type: utils.APITypeAssertFailed}
+				notifications = append(notifications, notification)
+			}
+		}
+	}
+	return notifications
+}
+
+func (r RequestProcessor) ProcessStatusAssert(process *models.Process, assert models.AssertItem) bool {
+	if assert.Type == "equals" && strconv.Itoa(process.Response.StatusCode) != assert.Value {
+		return false
+	}
+	return true
+}
+
+func (r RequestProcessor) ProcessJsonPathAssert(process *models.Process, assert models.AssertItem) bool {
+	if assert.Key == "" {
+		return true
+	}
+	if assert.Value == "" {
+		return true
+	}
+	if assert.Type == "equals" {
+		value := utils.CastType(assert.Value, assert.ValueType)
+		boolean, err := jsonpath.Equal(process.Body, assert.Key, value)
+		if err != nil {
+			log.Error(err)
+		}
+		return boolean
+	}
+	if assert.Type == "contains" {
+		value := utils.CastType(assert.Value, assert.ValueType)
+		boolean, err := jsonpath.Contains(process.Body, assert.Key, value)
+		if err != nil {
+			log.Error(err)
+		}
+		return boolean
+	}
+	return true
 }
 
 func (r RequestProcessor) SendNotifications(notifications []*models.Notification) {
@@ -60,6 +131,7 @@ func (r RequestProcessor) SendNotifications(notifications []*models.Notification
 		wg.Add(1)
 		go func(notifications []*models.Notification) {
 			item.Send(notifications)
+			wg.Done()
 		}(notifications)
 	}
 	wg.Wait()

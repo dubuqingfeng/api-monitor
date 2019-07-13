@@ -16,6 +16,7 @@ type API struct {
 	QueryStringParams string
 	RequestBody       string
 	Extra             string
+	Assert            string
 	APIURL            string
 	APIMethod         string
 	APIType           string // default: "json"
@@ -36,7 +37,7 @@ func GetAllAPIs() ([]API, error) {
 	var sql string
 	prefix := utils.Config.APIConfigDatabaseTablePrefix
 	sql = fmt.Sprintf("select a.id, a.name, a.description, a.request_header, a.query_string_params, "+
-		"a.request_body, a.access_endpoint_ids, b.url, b.method from %s a "+
+		"a.request_body, a.access_endpoint_ids, a.assert, b.url, b.method from %s a "+
 		"left join %s b on a.`api_id` = b.`id`;", prefix+"api_params", prefix+"apis")
 	rows, err := dbs.DBMaps[conn].Query(sql)
 	if err != nil {
@@ -46,7 +47,7 @@ func GetAllAPIs() ([]API, error) {
 	for rows.Next() {
 		var api API
 		if err := rows.Scan(&api.ID, &api.ParamName, &api.Description, &api.RequestHeader, &api.QueryStringParams,
-			&api.RequestBody, &api.AccessEndpointIds, &api.APIURL, &api.APIMethod); err != nil {
+			&api.RequestBody, &api.AccessEndpointIds, &api.Assert, &api.APIURL, &api.APIMethod); err != nil {
 			log.Error(err)
 		}
 		list = append(list, api)

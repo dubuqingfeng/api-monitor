@@ -48,3 +48,11 @@ header
     }
 }
 ```
+
+## examples
+
+err_no == 0
+
+```json
+{"status": [{"type": "equals","value": "200"}],"jsonpath":[{"type": "equals","key":"$.err_no","value": "0"}]}
+```

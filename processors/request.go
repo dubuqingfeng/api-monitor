@@ -109,6 +109,14 @@ func (r RequestProcessor) ProcessJsonPathAssert(process *models.Process, assert 
 		}
 		return boolean
 	}
+	if assert.Type == "len" {
+		value := utils.CastType(assert.Value, "int").(int)
+		boolean, err := jsonpath.Len(process.Body, assert.Key, value)
+		if err != nil {
+			log.Error(err)
+		}
+		return boolean
+	}
 	return true
 }
 
@@ -129,10 +137,10 @@ func (r RequestProcessor) SendNotifications(notifications []*models.Notification
 			continue
 		}
 		wg.Add(1)
-		go func(notifications []*models.Notification) {
-			item.Send(notifications)
+		go func(notifications []*models.Notification, sender senders.Sender) {
+			sender.Send(notifications)
 			wg.Done()
-		}(notifications)
+		}(notifications, item)
 	}
 	wg.Wait()
 }

@@ -42,6 +42,19 @@ func Equal(bytes []byte, expression string, expected interface{}) (bool, error) 
 	return true, nil
 }
 
+func Len(bytes []byte, expression string, expectedLength int) (bool, error) {
+	value, err := jsonPath(bytes, expression)
+	if err != nil {
+		return false, err
+	}
+
+	v := reflect.ValueOf(value)
+	if v.Len() != expectedLength {
+		return false, errors.New(fmt.Sprintf("\"%d\" not equal to \"%d\"", v.Len(), expectedLength))
+	}
+	return true, nil
+}
+
 func jsonPath(b []byte, expression string) (interface{}, error) {
 	v := interface{}(nil)
 	err := json.Unmarshal(b, &v)

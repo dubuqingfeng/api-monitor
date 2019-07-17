@@ -56,7 +56,6 @@ func (f APIFetcher) Handle() {
 				log.Error(err)
 				continue
 			}
-			log.Error(accessEndpointIds)
 		}
 
 		for _, endpoint := range endpoints {

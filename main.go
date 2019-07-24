@@ -6,11 +6,13 @@ import (
 	"github.com/dubuqingfeng/api-monitor/utils"
 	"github.com/robfig/cron"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 func init() {
 	utils.InitConfig("./configs/config.yaml")
 	log.Info(utils.Config)
+	utils.ConfigLocalFileSystemLogger("./logs/", "monitor.log", 7*time.Hour*24, time.Second*20)
 	dbs.InitMySQLDB()
 }
 

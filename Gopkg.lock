@@ -66,12 +66,39 @@
   version = "v1.0.2"
 
 [[projects]]
+  digest = "1:8f5579a88f14ca4029f38f7491f12f578e38d942d9343e63aaa68f14c31df053"
+  name = "github.com/lestrrat-go/file-rotatelogs"
+  packages = [
+    ".",
+    "internal/option",
+  ]
+  pruneopts = "UT"
+  revision = "3b4f34a036f374c18d604e1b8006d9fbb9593c06"
+  version = "v2.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:8654122ef85f2bc03859b0a7ea2d36c9965888689cdac7640cceaa6edb11cff6"
+  name = "github.com/lestrrat-go/strftime"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8b31f9c59b0feb56c456ce49a7b3d2b2e93a6f18"
+
+[[projects]]
   digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
   revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
   version = "v0.8.1"
+
+[[projects]]
+  digest = "1:1a23fdd843129ef761ffe7651bc5fe7c5b09fbe933e92783ab06cc11c37b7b37"
+  name = "github.com/rifflock/lfshook"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b9218ef580f59a2e72dad1aa33d660150445d05a"
+  version = "v2.4"
 
 [[projects]]
   digest = "1:ed615c5430ecabbb0fb7629a182da65ecee6523900ac1ac932520860878ffcad"
@@ -129,6 +156,8 @@
     "github.com/bearyinnovative/bearychat-go",
     "github.com/go-sql-driver/mysql",
     "github.com/jinzhu/configor",
+    "github.com/lestrrat-go/file-rotatelogs",
+    "github.com/rifflock/lfshook",
     "github.com/robfig/cron",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cast",

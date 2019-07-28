@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+// NewAPIFetcher new API fetcher
 func NewAPIFetcher() *APIFetcher {
 	fetcher := &APIFetcher{
 		ch: make(chan *models.Process),
@@ -30,12 +31,14 @@ func NewAPIFetcher() *APIFetcher {
 	return fetcher
 }
 
+// API fetcher
 type APIFetcher struct {
 	wg     sync.WaitGroup
 	client *http.Client
 	ch     chan *models.Process
 }
 
+// Handle fetch
 func (f APIFetcher) Handle() {
 	// Get all the endpoints
 	endpoints, err := models.GetAllAPIEndpoints()
@@ -86,6 +89,7 @@ func (f APIFetcher) Handle() {
 	}
 }
 
+// fetch
 func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) {
 	defer f.wg.Done()
 	var buf bytes.Buffer
@@ -104,7 +108,7 @@ func (f APIFetcher) fetch(endpoint models.APIEndpoint, api models.API) {
 	// request Headers
 	if api.RequestHeader != "" {
 		headers := make(map[string]string)
-		err = json.Unmarshal([]byte( api.RequestHeader), &headers)
+		err = json.Unmarshal([]byte(api.RequestHeader), &headers)
 		if err != nil {
 			log.Error(err)
 		}

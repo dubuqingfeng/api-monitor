@@ -1,9 +1,9 @@
 package utils
 
 const (
-	APIType500     = "500"
-	APIType50x     = "50x"
-	APITypeTimeout = "timeout"
+	APIType500          = "500"
+	APIType50x          = "50x"
+	APITypeTimeout      = "timeout"
 	APITypeAssertFailed = "assert"
 )
 

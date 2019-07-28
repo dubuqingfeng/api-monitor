@@ -12,9 +12,11 @@ import (
 	"sync"
 )
 
+// processor
 type RequestProcessor struct {
 }
 
+// process
 func (r RequestProcessor) Process(process *models.Process) {
 	var notifications []*models.Notification
 	url := process.Endpoint.Endpoint + process.API.APIURL
@@ -23,14 +25,14 @@ func (r RequestProcessor) Process(process *models.Process) {
 	// http status 500
 	if process.Response.StatusCode == http.StatusInternalServerError {
 		log.Error(process.Response.Status)
-		notification := &models.Notification{HttpStatus: process.Response.StatusCode, Reason: "", URL: url}
+		notification := &models.Notification{HTTPStatus: process.Response.StatusCode, Reason: "", URL: url}
 		notifications = append(notifications, notification)
 	}
 
 	// http status 50x
 	if process.Response.StatusCode >= http.StatusInternalServerError {
 		log.Error(process.Response.Status)
-		notification := &models.Notification{HttpStatus: process.Response.StatusCode, Reason: "", URL: url}
+		notification := &models.Notification{HTTPStatus: process.Response.StatusCode, Reason: "", URL: url}
 		notifications = append(notifications, notification)
 		r.SendNotifications(notifications)
 		return
@@ -45,6 +47,7 @@ func (r RequestProcessor) Process(process *models.Process) {
 	r.SendNotifications(notifications)
 }
 
+// process assert
 func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notification {
 	var assert models.Assert
 	var notifications []*models.Notification
@@ -60,7 +63,7 @@ func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notif
 		for _, assertStatus := range assert.Status {
 			true := r.ProcessStatusAssert(process, assertStatus)
 			if !true {
-				notification := &models.Notification{HttpStatus: process.Response.StatusCode, Reason: "", URL: url,
+				notification := &models.Notification{HTTPStatus: process.Response.StatusCode, Reason: "", URL: url,
 					Type: utils.APITypeAssertFailed}
 				notifications = append(notifications, notification)
 			}
@@ -70,7 +73,7 @@ func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notif
 		for _, assertStatus := range assert.JSONPath {
 			true := r.ProcessJsonPathAssert(process, assertStatus)
 			if !true {
-				notification := &models.Notification{HttpStatus: process.Response.StatusCode, Reason: "", URL: url,
+				notification := &models.Notification{HTTPStatus: process.Response.StatusCode, Reason: "", URL: url,
 					Type: utils.APITypeAssertFailed}
 				notifications = append(notifications, notification)
 			}
@@ -79,6 +82,7 @@ func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notif
 	return notifications
 }
 
+// process status assert
 func (r RequestProcessor) ProcessStatusAssert(process *models.Process, assert models.AssertItem) bool {
 	if assert.Type == "equals" && strconv.Itoa(process.Response.StatusCode) != assert.Value {
 		return false
@@ -86,6 +90,7 @@ func (r RequestProcessor) ProcessStatusAssert(process *models.Process, assert mo
 	return true
 }
 
+// json path assert
 func (r RequestProcessor) ProcessJsonPathAssert(process *models.Process, assert models.AssertItem) bool {
 	if assert.Key == "" {
 		return true
@@ -120,6 +125,7 @@ func (r RequestProcessor) ProcessJsonPathAssert(process *models.Process, assert 
 	return true
 }
 
+// send notifications
 func (r RequestProcessor) SendNotifications(notifications []*models.Notification) {
 	if len(notifications) == 0 {
 		return

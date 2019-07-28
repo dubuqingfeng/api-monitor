@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	// Database Map
 	DBMaps map[string]*sql.DB
 )
 

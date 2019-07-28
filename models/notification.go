@@ -1,7 +1,8 @@
 package models
 
+// notification model
 type Notification struct {
-	HttpStatus int
+	HTTPStatus int
 	Reason     string
 	Type       string
 	URL        string

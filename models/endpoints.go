@@ -8,13 +8,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// api endpoint model
 type APIEndpoint struct {
 	ID          int64
 	Name        string
 	Type        string
 	Description string
 	Endpoint    string
-	ServerId    int64
+	ServerID    int64
 	CreatedAt   string
 	UpdatedAt   string
 }
@@ -38,7 +39,7 @@ func GetAllAPIEndpoints() ([]APIEndpoint, error) {
 	for rows.Next() {
 		var endpoint APIEndpoint
 		if err := rows.Scan(&endpoint.ID, &endpoint.Name, &endpoint.Type, &endpoint.Description,
-			&endpoint.Endpoint, &endpoint.ServerId, &endpoint.CreatedAt, &endpoint.UpdatedAt); err != nil {
+			&endpoint.Endpoint, &endpoint.ServerID, &endpoint.CreatedAt, &endpoint.UpdatedAt); err != nil {
 			log.Error(err)
 		}
 		list = append(list, endpoint)

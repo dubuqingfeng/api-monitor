@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// API model
 type API struct {
 	ID                string
 	ParamName         string
@@ -22,11 +23,12 @@ type API struct {
 	APIType           string // default: "json"
 	AccessEndpointIds string
 	Description       string
-	ServerId          int64
+	ServerID          int64
 	CreatedAt         string
 	UpdatedAt         string
 }
 
+// GetAllAPIs get all apis
 func GetAllAPIs() ([]API, error) {
 	conn := "api:config:read"
 	var list []API

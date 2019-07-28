@@ -4,17 +4,20 @@ import (
 	"github.com/jinzhu/configor"
 )
 
+// dsn
 type MySQLDSN struct {
 	Name string
 	DSN  string
 }
 
+// mysql db
 type MySQLDB struct {
 	Read     MySQLDSN
 	Write    MySQLDSN
 	Timezone string
 }
 
+// sender config
 type SenderConfig struct {
 	BearyChat struct {
 		IsEnabled      bool
@@ -29,9 +32,10 @@ type SenderConfig struct {
 	}
 }
 
+// config
 var Config = struct {
 	Name                         string `default:"app_name"`
-	Debug                        bool
+	IsDebug                      bool
 	MonitorName                  string `default:"api-monitor"`
 	GlobalDatabase               MySQLDB
 	APIConfigDatabase            MySQLDB
@@ -47,6 +51,7 @@ func InitConfig(files string) {
 	}
 }
 
+// get all database configs
 func GetAllDatabaseConfigs() map[string]string {
 	configs := make(map[string]string)
 	AddDatabaseConfig(Config.GlobalDatabase, configs)
@@ -54,6 +59,7 @@ func GetAllDatabaseConfigs() map[string]string {
 	return configs
 }
 
+// add database config
 func AddDatabaseConfig(value MySQLDB, configs map[string]string) {
 	if value.Read.DSN != "" && value.Read.Name != "" {
 		configs[value.Read.Name] = value.Read.DSN

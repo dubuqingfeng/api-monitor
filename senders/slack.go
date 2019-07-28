@@ -12,10 +12,12 @@ import (
 	"strconv"
 )
 
+// SlackSender sender
 type SlackSender struct {
 	Sender
 }
 
+// SlackMessage slack message model
 type SlackMessage struct {
 	ID      uint64 `json:"id"`
 	Type    string `json:"type"`
@@ -25,16 +27,20 @@ type SlackMessage struct {
 	Token   string `json:"token"`
 }
 
+// SlackPusher pusher
 var SlackPusher SlackSender
 
+// init
 func init() {
 	SlackPusher = SlackSender{}
 }
 
+// is support
 func (s SlackSender) IsSupport() bool {
 	return utils.Config.SenderConfig.Slack.IsEnabled
 }
 
+// send
 func (s SlackSender) Send(notifications []*models.Notification) {
 	if !utils.Config.SenderConfig.Slack.IsEnabled {
 		return
@@ -44,6 +50,7 @@ func (s SlackSender) Send(notifications []*models.Notification) {
 	}
 }
 
+// SingleSend send notification
 func (s SlackSender) SingleSend(notification *models.Notification) {
 	message := SlackMessage{
 		AsUser:  true,
@@ -70,7 +77,8 @@ func (s SlackSender) SingleSend(notification *models.Notification) {
 	log.Info(string(content))
 }
 
+// BuildMessage build message
 func (s SlackSender) BuildMessage(notification *models.Notification) string {
-	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HttpStatus, notification.Type,
+	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HTTPStatus, notification.Type,
 		utils.Config.MonitorName, notification.URL)
 }

@@ -2,6 +2,7 @@ package utils
 
 import "github.com/spf13/cast"
 
+// cast type
 func CastType(value, valueType string) interface{} {
 	if valueType == "float64" {
 		return cast.ToFloat64(value)
@@ -9,7 +10,6 @@ func CastType(value, valueType string) interface{} {
 		return value
 	} else if valueType == "int" {
 		return cast.ToInt(value)
-	} else {
-		return value
 	}
+	return value
 }

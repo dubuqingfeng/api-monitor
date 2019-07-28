@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// custom logs
 func ConfigLocalFileSystemLogger(logPath string, logFileName string, maxAge time.Duration, rotationTime time.Duration) {
 	baseLogPath := path.Join(logPath, logFileName)
 	writer, err := rotatelogs.New(

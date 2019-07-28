@@ -1,5 +1,6 @@
 package models
 
+// assert model
 type Assert struct {
 	Status   []AssertItem `json:"status"`
 	JSONPath []AssertItem `json:"jsonpath"`
@@ -7,6 +8,7 @@ type Assert struct {
 	Header   []AssertItem `json:"header"`
 }
 
+// assert item model
 type AssertItem struct {
 	Type      string `json:"type"`
 	Key       string `json:"key"`

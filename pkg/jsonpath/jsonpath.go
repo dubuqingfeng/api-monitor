@@ -3,7 +3,6 @@ package jsonpath
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/PaesslerAG/jsonpath"
 	"reflect"
@@ -21,10 +20,10 @@ func Contains(bytes []byte, expression string, expected interface{}) (bool, erro
 
 	ok, found := includesElement(value, expected)
 	if !ok {
-		return false, errors.New(fmt.Sprintf("\"%s\" could not be applied builtin len()", expected))
+		return false, fmt.Errorf(fmt.Sprintf("\"%s\" could not be applied builtin len()", expected))
 	}
 	if !found {
-		return false, errors.New(fmt.Sprintf("\"%s\" does not contain \"%s\"", expected, value))
+		return false, fmt.Errorf(fmt.Sprintf("\"%s\" does not contain \"%s\"", expected, value))
 	}
 	return true, nil
 }
@@ -37,7 +36,7 @@ func Equal(bytes []byte, expression string, expected interface{}) (bool, error) 
 	}
 
 	if !objectsAreEqual(value, expected) {
-		return false, errors.New(fmt.Sprintf("\"%s\" not equal to \"%s\"", value, expected))
+		return false, fmt.Errorf("\"%s\" not equal to \"%s\"", value, expected)
 	}
 	return true, nil
 }
@@ -50,7 +49,7 @@ func Len(bytes []byte, expression string, expectedLength int) (bool, error) {
 
 	v := reflect.ValueOf(value)
 	if v.Len() != expectedLength {
-		return false, errors.New(fmt.Sprintf("\"%d\" not equal to \"%d\"", v.Len(), expectedLength))
+		return false, fmt.Errorf("\"%d\" not equal to \"%d\"", v.Len(), expectedLength)
 	}
 	return true, nil
 }

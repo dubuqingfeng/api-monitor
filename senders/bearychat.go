@@ -9,21 +9,25 @@ import (
 	"net/http"
 )
 
+// sender
 type BearyChatSender struct {
 	Sender
 	UnSupportType map[string]int
 }
 
+// bearychat pusher
 var BearyChatPusher BearyChatSender
 
 func init() {
 	BearyChatPusher = BearyChatSender{UnSupportType: utils.Config.SenderConfig.BearyChat.UnSupportTypes}
 }
 
+// is support
 func (f BearyChatSender) IsSupport() bool {
 	return utils.Config.SenderConfig.BearyChat.IsEnabled
 }
 
+// send
 func (f BearyChatSender) Send(notifications []*models.Notification) {
 	if !utils.Config.SenderConfig.BearyChat.IsEnabled {
 		return
@@ -33,6 +37,7 @@ func (f BearyChatSender) Send(notifications []*models.Notification) {
 	}
 }
 
+// send notification
 func (f BearyChatSender) SingleSend(notification *models.Notification) {
 	if _, ok := f.UnSupportType[notification.Type]; notification.Type != "" && ok {
 		return
@@ -49,7 +54,8 @@ func (f BearyChatSender) SingleSend(notification *models.Notification) {
 	}
 }
 
+// build message
 func (f BearyChatSender) BuildMessage(notification *models.Notification) string {
-	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HttpStatus,
+	return fmt.Sprintf("status:%d,type:%s,monitor:%s,url:%s", notification.HTTPStatus,
 		notification.Reason, utils.Config.MonitorName, notification.URL)
 }

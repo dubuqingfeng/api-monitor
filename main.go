@@ -6,6 +6,8 @@ import (
 	"github.com/dubuqingfeng/api-monitor/utils"
 	"github.com/robfig/cron"
 	log "github.com/sirupsen/logrus"
+	"net/http"
+	_ "net/http/pprof"
 	"time"
 )
 
@@ -26,6 +28,13 @@ func main() {
 		log.Error(err)
 	}
 	c.Start()
+	if utils.Config.Debug {
+		go func() {
+			if err := http.ListenAndServe("0.0.0.0:6060", nil); err != nil {
+				log.Error(err)
+			}
+		}()
+	}
 	// does not stop any jobs already running
 	defer c.Stop()
 	// blocking forever

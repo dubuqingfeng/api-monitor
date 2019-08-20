@@ -11,8 +11,6 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: 1.12
-      env:
-        GOPATH: $HOME
       id: go
 
     - name: Check out code into the Go module directory
@@ -20,6 +18,7 @@ jobs:
 
     - name: Get dependencies
       run: |
+        export PATH=$PATH:$(go env GOPATH)/bin # temporary fix. See https://github.com/actions/setup-go/issues/14
         go get -v -t -d ./...
         if [ -f Gopkg.toml ]; then
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh

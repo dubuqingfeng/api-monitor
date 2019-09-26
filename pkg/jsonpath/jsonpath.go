@@ -41,6 +41,19 @@ func Equal(bytes []byte, expression string, expected interface{}) (bool, error) 
 	return true, nil
 }
 
+// Not Equal is a convenience function to assert that a jsonpath expression extracts a value
+func NotEqual(bytes []byte, expression string, expected interface{}) (bool, error) {
+	value, err := jsonPath(bytes, expression)
+	if err != nil {
+		return false, err
+	}
+
+	if objectsAreEqual(value, expected) {
+		return false, fmt.Errorf("\"%s\" equal to \"%s\"", value, expected)
+	}
+	return true, nil
+}
+
 func Len(bytes []byte, expression string, expectedLength int) (bool, error) {
 	value, err := jsonPath(bytes, expression)
 	if err != nil {

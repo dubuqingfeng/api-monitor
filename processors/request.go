@@ -106,6 +106,14 @@ func (r RequestProcessor) ProcessJsonPathAssert(process *models.Process, assert 
 		}
 		return boolean
 	}
+	if assert.Type == "not_equals" {
+		value := utils.CastType(assert.Value, assert.ValueType)
+		boolean, err := jsonpath.NotEqual(process.Body, assert.Key, value)
+		if err != nil {
+			log.Error(err)
+		}
+		return boolean
+	}
 	if assert.Type == "contains" {
 		value := utils.CastType(assert.Value, assert.ValueType)
 		boolean, err := jsonpath.Contains(process.Body, assert.Key, value)

@@ -1,0 +1,21 @@
+CREATE TABLE `btc_pool_api_ping_params` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) NOT NULL DEFAULT '',
+  `weight` int(11) NOT NULL DEFAULT '0',
+  `endpoint` varchar(255) NOT NULL DEFAULT '',
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` varchar(255) NOT NULL DEFAULT '',
+  `request_header` varchar(255) NOT NULL DEFAULT '',
+  `query_string_params` varchar(255) NOT NULL DEFAULT '',
+  `request_body` varchar(255) NOT NULL DEFAULT '',
+  `access_endpoint_ids` varchar(255) NOT NULL DEFAULT '',
+  `method` varchar(20) NOT NULL DEFAULT '',
+  `extra` varchar(255) NOT NULL DEFAULT '',
+  `assert` text NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `url` (`url`),
+  KEY `description` (`description`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

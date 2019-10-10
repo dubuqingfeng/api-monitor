@@ -40,43 +40,55 @@ type APIFetcher struct {
 
 // Handle fetch
 func (f APIFetcher) Handle() {
-	// Get all the endpoints
-	endpoints, err := models.GetAllAPIEndpoints()
-	if err != nil {
-		log.Error(err)
-	}
-	// Get all the apis
-	apis, err := models.GetAllAPIs()
-	if err != nil {
-		log.Error(err)
-	}
-	for _, api := range apis {
-		var accessEndpointIds map[int64]int
-		if api.AccessEndpointIds != "" {
-			accessEndpointIds = make(map[int64]int)
-			err = json.Unmarshal([]byte(api.AccessEndpointIds), &accessEndpointIds)
-			if err != nil {
-				log.Error(err)
-				continue
-			}
+	// api monitor
+	if utils.Config.APIMonitorEnabled {
+		// Get all the endpoints
+		endpoints, err := models.GetAllAPIEndpoints()
+		if err != nil {
+			log.Error(err)
 		}
-
-		for _, endpoint := range endpoints {
-			// api
-			stats, ok := accessEndpointIds[endpoint.ID]
-			if len(accessEndpointIds) != 0 && ok {
-				if stats == utils.LimitAccessEndpointType {
-					// limit access
+		// Get all the apis
+		apis, err := models.GetAllAPIs()
+		if err != nil {
+			log.Error(err)
+		}
+		for _, api := range apis {
+			var accessEndpointIds map[int64]int
+			if api.AccessEndpointIds != "" {
+				accessEndpointIds = make(map[int64]int)
+				err = json.Unmarshal([]byte(api.AccessEndpointIds), &accessEndpointIds)
+				if err != nil {
+					log.Error(err)
 					continue
 				}
 			}
 
-			if len(accessEndpointIds) != 0 && !ok {
-				// limit
-				continue
+			for _, endpoint := range endpoints {
+				// api
+				stats, ok := accessEndpointIds[endpoint.ID]
+				if len(accessEndpointIds) != 0 && ok && stats == utils.LimitAccessEndpointType {
+					// limit access
+					continue
+				}
+
+				if len(accessEndpointIds) != 0 && !ok {
+					// limit
+					continue
+				}
+				f.wg.Add(1)
+				go f.fetch(endpoint, api)
 			}
+		}
+	}
+	// ping api monitor
+	if utils.Config.PingAPIMonitorEnabled {
+		pingAPIs, err := models.GetAllPingAPIs()
+		if err != nil {
+			log.Error(err)
+		}
+		for _, pingAPI := range pingAPIs {
 			f.wg.Add(1)
-			go f.fetch(endpoint, api)
+			go f.fetch(models.APIEndpoint{Endpoint: pingAPI.Endpoint}, pingAPI)
 		}
 	}
 	go func() {

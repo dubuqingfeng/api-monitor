@@ -59,6 +59,7 @@ func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notif
 	if err != nil {
 		log.Error(err)
 	}
+	// http response status
 	if len(assert.Status) != 0 {
 		for _, assertStatus := range assert.Status {
 			true := r.ProcessStatusAssert(process, assertStatus)
@@ -69,6 +70,18 @@ func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notif
 			}
 		}
 	}
+	// http response body
+	if len(assert.Body) != 0 {
+		for _, assertBody := range assert.Body {
+			true := r.ProcessBodyAssert(process, assertBody)
+			if !true {
+				notification := &models.Notification{HTTPStatus: process.Response.StatusCode, Reason: "", URL: url,
+					Type: utils.APITypeAssertFailed}
+				notifications = append(notifications, notification)
+			}
+		}
+	}
+	// http response json path
 	if len(assert.JSONPath) != 0 {
 		for _, assertStatus := range assert.JSONPath {
 			true := r.ProcessJsonPathAssert(process, assertStatus)
@@ -79,12 +92,22 @@ func (r RequestProcessor) ProcessAssert(process *models.Process) []*models.Notif
 			}
 		}
 	}
+	// http response headers
+	// http response cookies
 	return notifications
 }
 
 // process status assert
 func (r RequestProcessor) ProcessStatusAssert(process *models.Process, assert models.AssertItem) bool {
 	if assert.Type == "equals" && strconv.Itoa(process.Response.StatusCode) != assert.Value {
+		return false
+	}
+	return true
+}
+
+// process body assert
+func (r RequestProcessor) ProcessBodyAssert(process *models.Process, assert models.AssertItem) bool {
+	if assert.Type == "equals" && string(process.Body) != assert.Value {
 		return false
 	}
 	return true

@@ -6,6 +6,7 @@ type Assert struct {
 	JSONPath []AssertItem `json:"jsonpath"`
 	Cookie   []AssertItem `json:"cookie"`
 	Header   []AssertItem `json:"header"`
+	Body     []AssertItem `json:"body"`
 }
 
 // assert item model

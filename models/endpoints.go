@@ -28,8 +28,7 @@ func GetAllAPIEndpoints() ([]APIEndpoint, error) {
 		return list, errors.New("not found this database." + conn)
 	}
 
-	var sql string
-	sql = fmt.Sprintf("SELECT id, `name`, `type`, description, endpoint, server_id, created_at, "+
+	sql := fmt.Sprintf("SELECT id, `name`, `type`, description, endpoint, server_id, created_at, "+
 		"updated_at FROM %s", utils.Config.APIConfigDatabaseTablePrefix+"api_endpoints")
 	rows, err := dbs.DBMaps[conn].Query(sql)
 	if err != nil {

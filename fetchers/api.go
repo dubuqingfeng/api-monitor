@@ -18,6 +18,7 @@ import (
 // NewAPIFetcher new API fetcher
 func NewAPIFetcher() *APIFetcher {
 	fetcher := &APIFetcher{
+		wg: &sync.WaitGroup{},
 		ch: make(chan *models.Process),
 		client: &http.Client{
 			Timeout: 10 * time.Second,
@@ -33,7 +34,7 @@ func NewAPIFetcher() *APIFetcher {
 
 // API fetcher
 type APIFetcher struct {
-	wg     sync.WaitGroup
+	wg     *sync.WaitGroup
 	client *http.Client
 	ch     chan *models.Process
 }

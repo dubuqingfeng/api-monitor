@@ -21,11 +21,11 @@ func NewAPIFetcher() *APIFetcher {
 		wg: &sync.WaitGroup{},
 		ch: make(chan *models.Process),
 		client: &http.Client{
-			Timeout: 10 * time.Second,
+			Timeout: utils.Config.Timeout.Timeout * time.Second,
 			Transport: &http.Transport{
-				TLSHandshakeTimeout:   10 * time.Second,
-				ResponseHeaderTimeout: 10 * time.Second,
-				ExpectContinueTimeout: 1 * time.Second,
+				TLSHandshakeTimeout:   utils.Config.Timeout.TLSHandshakeTimeout * time.Second,
+				ResponseHeaderTimeout: utils.Config.Timeout.ResponseHeaderTimeout * time.Second,
+				ExpectContinueTimeout: utils.Config.Timeout.ExpectContinueTimeout * time.Second,
 			},
 		},
 	}

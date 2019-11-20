@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/jinzhu/configor"
+	"time"
 )
 
 // dsn
@@ -43,6 +44,12 @@ var Config = struct {
 	APIConfigDatabase            MySQLDB
 	APIConfigDatabaseTablePrefix string
 	SenderConfig                 SenderConfig
+	Timeout                      struct {
+		Timeout               time.Duration `default:"15"`
+		TLSHandshakeTimeout   time.Duration `default:"15"`
+		ResponseHeaderTimeout time.Duration `default:"15"`
+		ExpectContinueTimeout time.Duration `default:"1"`
+	}
 }{}
 
 // init config, example: config.example

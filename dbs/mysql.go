@@ -26,9 +26,8 @@ func InitMySQLDB() {
 			err := tempDB.Close()
 			if err != nil {
 				log.Error(err)
-				panic(err.Error())
 			}
-			panic(err.Error())
+			continue
 		}
 		tempDB.SetConnMaxLifetime(time.Minute * 10)
 		tempDB.SetMaxIdleConns(10)

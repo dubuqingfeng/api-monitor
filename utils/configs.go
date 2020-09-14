@@ -31,6 +31,9 @@ type SenderConfig struct {
 		Channel        string
 		UnSupportTypes map[string]int
 	}
+	Log struct {
+		IsEnabled bool
+	}
 }
 
 // config
@@ -49,6 +52,11 @@ var Config = struct {
 		TLSHandshakeTimeout   time.Duration `default:"15"`
 		ResponseHeaderTimeout time.Duration `default:"15"`
 		ExpectContinueTimeout time.Duration `default:"1"`
+	}
+	SourceFormat struct {
+		Ping     string `default:"mysql"`
+		API      string `default:"mysql"`
+		Endpoint string `default:"mysql"`
 	}
 	SenderConfig SenderConfig
 }{}
@@ -72,8 +80,8 @@ func GetMonitoringExpression() string {
 // get all database configs
 func GetAllDatabaseConfigs() map[string]string {
 	configs := make(map[string]string)
-	// AddDatabaseConfig(Config.GlobalDatabase, configs)
-	// AddDatabaseConfig(Config.APIConfigDatabase, configs)
+	AddDatabaseConfig(Config.GlobalDatabase, configs)
+	AddDatabaseConfig(Config.APIConfigDatabase, configs)
 	return configs
 }
 

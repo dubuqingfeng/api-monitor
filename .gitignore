@@ -6,3 +6,5 @@ config.*.yaml
 *.log.*
 
 *.key
+
+*.json

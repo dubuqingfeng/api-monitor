@@ -1,0 +1,24 @@
+name: "api-monitor"
+monitorname: "电脑"
+apiconfigdatabase:
+  read:
+    name: "api:config:read"
+    dsn: ""
+  write:
+    name: "api:config:write"
+    dsn: ""
+apiconfigdatabasetableprefix: ""
+apimonitorenabled: false
+pingapimonitorenabled: true
+sourceformat:
+  ping: "json"
+senderconfig:
+  bearychat:
+    isenabled: false
+    groupendpoint: ""
+  slack:
+    isenabled: false
+    robottoken: ""
+    channel: "api-monitor"
+  log:
+    isenabled: true

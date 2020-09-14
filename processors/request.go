@@ -161,7 +161,7 @@ func (r RequestProcessor) SendNotifications(notifications []*models.Notification
 	}
 
 	// pusher list
-	pushers := [2]senders.Sender{senders.BearyChatPusher, senders.SlackPusher}
+	pushers := [3]senders.Sender{senders.BearyChatPusher, senders.SlackPusher, senders.LogPusher}
 
 	var wg sync.WaitGroup
 	for _, item := range pushers {

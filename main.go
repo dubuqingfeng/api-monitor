@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/dubuqingfeng/api-monitor/dbs"
 	"github.com/dubuqingfeng/api-monitor/fetchers"
 	"github.com/dubuqingfeng/api-monitor/utils"
@@ -19,6 +20,32 @@ func init() {
 }
 
 func main() {
+	mode := flag.String("mode", "cron", "")
+	flag.Parse()
+	SetProfiling()
+	if *mode == "command" {
+		RunCommand()
+	} else {
+		StartCronJobs()
+	}
+}
+
+func SetProfiling() {
+	if utils.Config.IsDebug {
+		go func() {
+			if err := http.ListenAndServe("0.0.0.0:6060", nil); err != nil {
+				log.Error(err)
+			}
+		}()
+	}
+}
+
+func RunCommand() {
+	fetch := fetchers.NewAPIFetcher()
+	fetch.Handle()
+}
+
+func StartCronJobs() {
 	c := cron.New()
 	_, err := c.AddFunc(utils.GetMonitoringExpression(), func() {
 		fetch := fetchers.NewAPIFetcher()
@@ -28,15 +55,6 @@ func main() {
 		log.Error(err)
 	}
 	c.Start()
-	if utils.Config.IsDebug {
-		go func() {
-			if err := http.ListenAndServe("0.0.0.0:6060", nil); err != nil {
-				log.Error(err)
-			}
-		}()
-	}
-	// does not stop any jobs already running
 	defer c.Stop()
-	// blocking forever
 	select {}
 }

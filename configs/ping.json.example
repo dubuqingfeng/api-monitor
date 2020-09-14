@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "name": "测试ping",
+    "description": "",
+    "request_header": "",
+    "query_string_params": "",
+    "request_body": "",
+    "access_endpoint_ids": "",
+    "assert": "{\"status\": [{\"type\": \"equals\",\"value\": \"200\"}],\"body\":[{\"type\": \"equals\",\"key\":\"\",\"value\": \"pong\",\"value_type\":\"string\"}]}",
+    "url": "/ping",
+    "method": "GET",
+    "endpoint": "https://dbqf.xyz/"
+  }
+]

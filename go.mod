@@ -15,7 +15,7 @@ require (
 	github.com/golangci/revgrep v0.0.0-20180812185044-276a5c0a1039 // indirect
 	github.com/gorilla/websocket v1.4.0
 	github.com/gostaticanalysis/analysisutil v0.0.3 // indirect
-	github.com/jinzhu/configor v1.1.0
+	github.com/jinzhu/configor v1.2.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2
 	github.com/lestrrat-go/file-rotatelogs v2.2.0+incompatible
 	github.com/lestrrat-go/strftime v0.0.0-20180821113735-8b31f9c59b0f

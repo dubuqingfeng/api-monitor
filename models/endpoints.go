@@ -20,8 +20,12 @@ type APIEndpoint struct {
 	UpdatedAt   string
 }
 
-// get all api endpoints, table name: prefix_api_endpoints
+// GetAllAPIEndpoints get all api endpoints, table name: prefix_api_endpoints
 func GetAllAPIEndpoints() ([]APIEndpoint, error) {
+	return GetAllAPIEndpointsByMySQL()
+}
+
+func GetAllAPIEndpointsByMySQL() ([]APIEndpoint, error) {
 	conn := "api:config:read"
 	var list []APIEndpoint
 	if exists := dbs.CheckDBConnExists(conn); !exists {

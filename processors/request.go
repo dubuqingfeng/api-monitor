@@ -20,8 +20,6 @@ type RequestProcessor struct {
 func (r RequestProcessor) Process(process *models.Process) {
 	var notifications []*models.Notification
 	url := process.Endpoint.Endpoint + process.API.APIURL
-	//url := process.Response.Request.URL.RawQuery
-
 	// http status 500
 	if process.Response.StatusCode == http.StatusInternalServerError {
 		log.Error(process.Response.Status)

@@ -4,7 +4,7 @@ import (
 	"github.com/dubuqingfeng/api-monitor/dbs"
 	"github.com/dubuqingfeng/api-monitor/fetchers"
 	"github.com/dubuqingfeng/api-monitor/utils"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	_ "net/http/pprof"
@@ -20,7 +20,7 @@ func init() {
 
 func main() {
 	c := cron.New()
-	err := c.AddFunc("0 * * * * *", func() {
+	_, err := c.AddFunc(utils.GetMonitoringExpression(), func() {
 		fetch := fetchers.NewAPIFetcher()
 		fetch.Handle()
 	})

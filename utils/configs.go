@@ -35,21 +35,22 @@ type SenderConfig struct {
 
 // config
 var Config = struct {
-	Name                         string `default:"app_name"`
+	Name                         string `default:"api-monitor"`
+	MonitorName                  string `default:"api-monitor"`
 	IsDebug                      bool
+	MonitoringExpression         string
 	APIMonitorEnabled            bool `default:"true"`
 	PingAPIMonitorEnabled        bool
-	MonitorName                  string `default:"api-monitor"`
 	GlobalDatabase               MySQLDB
 	APIConfigDatabase            MySQLDB
 	APIConfigDatabaseTablePrefix string
-	SenderConfig                 SenderConfig
 	Timeout                      struct {
 		Timeout               time.Duration `default:"15"`
 		TLSHandshakeTimeout   time.Duration `default:"15"`
 		ResponseHeaderTimeout time.Duration `default:"15"`
 		ExpectContinueTimeout time.Duration `default:"1"`
 	}
+	SenderConfig SenderConfig
 }{}
 
 // init config, example: config.example
@@ -60,11 +61,19 @@ func InitConfig(files string) {
 	}
 }
 
+// TODO check cron expression
+func GetMonitoringExpression() string {
+	if Config.MonitoringExpression == "" {
+		return "* * * * *"
+	}
+	return Config.MonitoringExpression
+}
+
 // get all database configs
 func GetAllDatabaseConfigs() map[string]string {
 	configs := make(map[string]string)
-	AddDatabaseConfig(Config.GlobalDatabase, configs)
-	AddDatabaseConfig(Config.APIConfigDatabase, configs)
+	// AddDatabaseConfig(Config.GlobalDatabase, configs)
+	// AddDatabaseConfig(Config.APIConfigDatabase, configs)
 	return configs
 }
 

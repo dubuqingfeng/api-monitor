@@ -32,6 +32,11 @@ type API struct {
 
 // GetAllAPIs get all apis
 func GetAllAPIs() ([]API, error) {
+	return GetAllAPIsByMySQL()
+}
+
+// GetAllAPIsByDatabase get all apis by database.
+func GetAllAPIsByMySQL() ([]API, error) {
 	conn := "api:config:read"
 	var list []API
 	if exists := dbs.CheckDBConnExists(conn); !exists {
@@ -66,6 +71,10 @@ func GetAllAPIs() ([]API, error) {
 
 // get all ping apis.
 func GetAllPingAPIs() ([]API, error) {
+	return GetAllPingAPIsByMySQL()
+}
+
+func GetAllPingAPIsByMySQL() ([]API, error) {
 	conn := "api:config:read"
 	var list []API
 	if exists := dbs.CheckDBConnExists(conn); !exists {

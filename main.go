@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/dubuqingfeng/api-monitor/dbs"
 	"github.com/dubuqingfeng/api-monitor/fetchers"
+	"github.com/dubuqingfeng/api-monitor/processors"
 	"github.com/dubuqingfeng/api-monitor/utils"
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ func init() {
 	log.Info(utils.Config)
 	utils.ConfigLocalFileSystemLogger("./logs/", "monitor.log", 7*time.Hour*24, time.Second*20)
 	dbs.InitMySQLDB()
+	processors.InitRulerLoader()
 }
 
 func main() {
@@ -47,10 +49,7 @@ func RunCommand() {
 
 func StartCronJobs() {
 	c := cron.New()
-	_, err := c.AddFunc(utils.GetMonitoringExpression(), func() {
-		fetch := fetchers.NewAPIFetcher()
-		fetch.Handle()
-	})
+	_, err := c.AddFunc(utils.GetMonitoringExpression(), func() { RunCommand() })
 	if err != nil {
 		log.Error(err)
 	}

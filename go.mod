@@ -32,6 +32,7 @@ require (
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.0
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
+	github.com/tidwall/buntdb v1.1.2
 	github.com/uudashr/gocognit v1.0.0 // indirect
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47
 	golang.org/x/tools v0.0.0-20191010201905-e5ffc44a6fee // indirect

@@ -1,11 +1,13 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/dubuqingfeng/api-monitor/dbs"
 	"github.com/dubuqingfeng/api-monitor/utils"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 )
 
 // API model
@@ -26,13 +28,22 @@ type API struct {
 	ServerID          int64
 	CreatedAt         string
 	UpdatedAt         string
-	// for ping api
-	Endpoint string
+	Endpoint          string // for ping api
 }
 
 // GetAllAPIs get all apis
 func GetAllAPIs() ([]API, error) {
 	return GetAllAPIsByMySQL()
+}
+
+func GetAllAPIsByJSON() ([]API, error) {
+	file, _ := ioutil.ReadFile("configs/apis.json")
+	var list []API
+	if err := json.Unmarshal([]byte(file), &list); err != nil {
+		log.Error(err)
+		return list, err
+	}
+	return list, nil
 }
 
 // GetAllAPIsByDatabase get all apis by database.

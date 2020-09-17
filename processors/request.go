@@ -42,6 +42,7 @@ func (r RequestProcessor) Process(process *models.Process) {
 	assertNotifications := r.ProcessAssert(process)
 	notifications = append(notifications, assertNotifications...)
 	// send
+	notifications = Loader.HandleNotifications(notifications, process)
 	r.SendNotifications(notifications)
 }
 

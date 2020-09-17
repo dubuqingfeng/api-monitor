@@ -1,11 +1,13 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/dubuqingfeng/api-monitor/dbs"
 	"github.com/dubuqingfeng/api-monitor/utils"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 )
 
 // api endpoint model
@@ -23,6 +25,16 @@ type APIEndpoint struct {
 // GetAllAPIEndpoints get all api endpoints, table name: prefix_api_endpoints
 func GetAllAPIEndpoints() ([]APIEndpoint, error) {
 	return GetAllAPIEndpointsByMySQL()
+}
+
+func GetAllAPIEndpointsByJSON() ([]APIEndpoint, error) {
+	file, _ := ioutil.ReadFile("configs/endpoints.json")
+	var list []APIEndpoint
+	if err := json.Unmarshal([]byte(file), &list); err != nil {
+		log.Error(err)
+		return list, err
+	}
+	return list, nil
 }
 
 func GetAllAPIEndpointsByMySQL() ([]APIEndpoint, error) {

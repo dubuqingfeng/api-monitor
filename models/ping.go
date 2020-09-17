@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/dubuqingfeng/api-monitor/dbs"
 	"github.com/dubuqingfeng/api-monitor/utils"
+	"github.com/gocarina/gocsv"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 )
@@ -16,9 +17,29 @@ func GetAllPingAPIs() ([]API, error) {
 		return GetAllPingAPIsByJSON()
 	} else if utils.Config.SourceFormat.Ping == "mysql" {
 		return GetAllPingAPIsByMySQL()
+	} else if utils.Config.SourceFormat.Ping == "csv" {
+		return GetAllPingAPIsByCSV()
 	} else {
 		return GetAllPingAPIsByMySQL()
 	}
+}
+
+func GetAllPingAPIsByCSV() ([]API, error) {
+	var list []API
+	content, err := ioutil.ReadFile("configs/ping.csv")
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	if utils.HasBOM(content) {
+		content = utils.StripBOM(content)
+	}
+	// var records []*Record
+	if err := gocsv.UnmarshalBytes(content, &list); err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	return list, nil
 }
 
 func GetAllPingAPIsByJSON() ([]API, error) {

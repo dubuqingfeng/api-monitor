@@ -9,6 +9,7 @@ require (
 	github.com/bearyinnovative/bearychat-go v0.0.0-20170711015913-c53edc77f5e3
 	github.com/bombsimon/wsl v1.2.3 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gocarina/gocsv v0.0.0-20200827134620-49f5c3fa2b3e
 	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/golangci/gocyclo v0.0.0-20180528144436-0a533e8fa43d // indirect
 	github.com/golangci/golangci-lint v1.20.0 // indirect

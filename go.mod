@@ -14,7 +14,7 @@ require (
 	github.com/golangci/gocyclo v0.0.0-20180528144436-0a533e8fa43d // indirect
 	github.com/golangci/golangci-lint v1.20.0 // indirect
 	github.com/golangci/revgrep v0.0.0-20180812185044-276a5c0a1039 // indirect
-	github.com/gorilla/websocket v1.4.0
+	github.com/gorilla/websocket v1.4.2
 	github.com/gostaticanalysis/analysisutil v0.0.3 // indirect
 	github.com/jinzhu/configor v1.2.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2
@@ -33,6 +33,7 @@ require (
 	github.com/spf13/cast v1.3.0
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/tidwall/buntdb v1.1.2
+	github.com/tidwall/gjson v1.12.1 // indirect
 	github.com/uudashr/gocognit v1.0.0 // indirect
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47
 	golang.org/x/tools v0.0.0-20191010201905-e5ffc44a6fee // indirect
